@@ -63,19 +63,16 @@ var svg = d3.select("#test").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("https://www.opengov-muenchen.de/dataset/9b072087-6098-4558-b221-01e7d119b512/resource/9177f886-7341-49d2-9bfa-15d4d8631327/download/indikatorenatlas2103bevoelkerungaltersdurchschnitt.csv", function(error, data) {
+d3.csv('../data.csv', function(error, data) {
   if (error) throw error;
     
     var districtName;
     
     //filter NaN entries
     var filteredData = data.filter(function(a){
-       // console.log(a.INDIKATOR_WERT);
-       // if( !isNaN(a.INDIKATOR_WERT) && !isNaN(a.JAHR))
         if( !isNaN(a.INDIKATOR_WERT) && a.INDIKATOR_WERT > 0 && a.NUMMER == 7 )
             { 
                 return a;
-                //console.log(a.INDIKATOR_WERT);
             } 
     });
 
