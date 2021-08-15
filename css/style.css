@@ -1,0 +1,121 @@
+body{
+    font-family: sans-serif;
+    margin-bottom:0px;
+}
+
+.myContainer{
+    padding-left: 290px;
+  
+}
+
+.mapContainer{
+    background-image: url('../img/bg_muc.png'); 
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+   /* background-color: aquamarine;   */
+}
+
+.legContainer{
+    background-color: aquamarine;   
+}
+
+
+
+#slider{
+    width: 600px; 
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+    transform: rotate(90deg);    
+    
+    right: 280px;
+    top: 280px;
+}
+
+.thumb{
+    display:none;   
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid #000000;
+  height: 50px;
+  width: 24px;
+  border-radius: 1px;
+  background: #ffffff;
+  cursor: pointer;
+  margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+  
+}
+input[type=range]::-moz-range-thumb{
+  border: 1px solid #000000;
+  height: 50px;
+  width: 24px;
+  border-radius: 1px;
+  background: #ffffff;
+  cursor: pointer;
+  
+  
+}
+
+.detailbar{
+    width: 300px; 
+    /* margin-top: 64px;   /* 64px is height of top navbar */
+}
+.detailbar.right{
+    width: 300px; 
+    right:0;
+    left:auto;
+    padding-top: 100px;
+    padding-left: 50px;
+  
+    /* margin-top: 64px;   /* 64px is height of top navbar */
+}
+
+.districtImage{
+    width: 300px;   
+}
+
+
+.side-nav.left li:first-child{
+    padding: 0;
+}
+
+
+.side-nav.right li{
+    margin-bottom: 19px;   
+}
+
+
+.districtDetails{
+ padding: 15px;   
+}
+
+/* Legende */
+
+.legHeader{
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.legItem{
+       
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.area {
+    fill: lightsteelblue;
+      stroke-width: 0;
+}
+
+.arealine { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
