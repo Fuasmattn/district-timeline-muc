@@ -1,0 +1,43 @@
+{
+  "name": "district-timeline-muc",
+  "version": "1.0.0",
+  "description": "Interactive visualization of demographic data across Munich's 25 districts",
+  "main": "js/interaction.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "munich",
+    "visualization",
+    "demographics",
+    "d3",
+    "open-data"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "csv-parse": "^6.1.0",
+    "jest": "^30.2.0",
+    "jsdom": "^27.1.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "js/**/*.js",
+      "!js/d3.js",
+      "!js/d3.min.js",
+      "!js/ion.rangeSlider.js",
+      "!js/ion.rangeSlider.min.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/tests/"
+    ]
+  }
+}
