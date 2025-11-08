@@ -24,8 +24,82 @@ export class MapComponent {
   }
 
   private async loadSVGPaths() {
-    // For demonstration, create a simple grid layout of districts
-    // In a production app, this would load actual GeoJSON or SVG paths
+    try {
+      // Load the SVG file containing district boundaries
+      const response = await fetch('/map.svg');
+      const svgText = await response.text();
+      
+      // Parse the SVG
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+      
+      // Extract all polygon elements that represent districts
+      const polygons = svgDoc.querySelectorAll('polygon[id^="path"]');
+      
+      polygons.forEach((polygon) => {
+        const id = polygon.getAttribute('id');
+        const points = polygon.getAttribute('points');
+        
+        if (id && points) {
+          // Extract district number from id (e.g., "path1" -> 1)
+          const match = id.match(/path(\d+)/);
+          if (match) {
+            const districtNum = parseInt(match[1]);
+            const district = DISTRICTS.find(d => d.number === districtNum);
+            
+            if (district) {
+              // Convert points to path data
+              const pathData = this.pointsToPath(points);
+              this.createDistrictPath(pathData, district.number, district.name);
+            }
+          }
+        }
+      });
+      
+      this.fitToViewBox();
+    } catch (error) {
+      console.error('Error loading SVG paths:', error);
+      this.createFallbackGrid();
+    }
+  }
+
+  private pointsToPath(points: string): string {
+    // Convert SVG polygon points to path data
+    const coords = points.trim().split(/\s+/);
+    if (coords.length === 0) return '';
+    
+    const pairs: string[] = [];
+    for (let i = 0; i < coords.length; i += 2) {
+      if (i + 1 < coords.length) {
+        pairs.push(`${coords[i]},${coords[i + 1]}`);
+      }
+    }
+    
+    if (pairs.length === 0) return '';
+    
+    // Create path: M (move to first point) L (line to subsequent points) Z (close path)
+    return `M ${pairs[0]} L ${pairs.slice(1).join(' ')} Z`;
+  }
+
+  private createDistrictPath(pathData: string, number: number, name: string) {
+    this.g.append('path')
+      .attr('d', pathData)
+      .attr('class', 'district')
+      .attr('data-district', number)
+      .attr('data-name', name)
+      .on('click', () => {
+        this.handleDistrictClick(number);
+      })
+      .on('mouseover', function() {
+        d3.select(this).classed('hover', true);
+      })
+      .on('mouseout', function() {
+        d3.select(this).classed('hover', false);
+      });
+  }
+
+  private createFallbackGrid() {
+    // Fallback grid layout if SVG loading fails
     const gridSize = 5;
     const rectWidth = 100;
     const rectHeight = 100;
@@ -45,7 +119,7 @@ export class MapComponent {
         .attr('class', 'district')
         .attr('data-district', district.number)
         .attr('data-name', district.name)
-        .attr('rx', 4) // Rounded corners
+        .attr('rx', 4)
         .on('click', () => {
           this.handleDistrictClick(district.number);
         })
@@ -68,8 +142,6 @@ export class MapComponent {
         .attr('pointer-events', 'none')
         .text(district.number);
     });
-
-    this.fitToViewBox();
   }
 
   private fitToViewBox() {
@@ -105,7 +177,7 @@ export class MapComponent {
   }
 
   public updateColors(year: number, colorScale: d3.ScaleSequential<string>) {
-    this.g.selectAll<SVGRectElement, unknown>('.district').each((_d, i, nodes) => {
+    this.g.selectAll<SVGPathElement | SVGRectElement, unknown>('.district').each((_d, i, nodes) => {
       const element = nodes[i];
       const districtNumber = parseInt(element.getAttribute('data-district') || '0');
       const districtData = this.data.get(districtNumber);

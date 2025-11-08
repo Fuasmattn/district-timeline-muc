@@ -33,16 +33,50 @@ header {
   color: white;
   padding: 1.5rem 2rem;
   box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-header h1 {
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-title h1 {
   font-size: 1.8rem;
   margin-bottom: 0.25rem;
 }
 
-header p {
+.header-title p {
   font-size: 0.95rem;
   opacity: 0.9;
+}
+
+.header-controls {
+  flex-shrink: 0;
+}
+
+.header-controls .slider-container {
+  min-width: 300px;
+}
+
+.header-controls .slider-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: white;
+}
+
+.header-controls #year-display {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
 }
 
 main {
@@ -223,27 +257,15 @@ main {
   margin-bottom: 1rem;
 }
 
-.controls {
-  background: white;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-}
-
 .slider-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 300px;
 }
 
 .slider-container label {
   display: block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
   font-size: 0.95rem;
-}
-
-#year-display {
-  color: var(--primary-color);
-  font-size: 1.1rem;
 }
 
 #year-slider {
@@ -252,7 +274,7 @@ main {
   border-radius: 4px;
   outline: none;
   -webkit-appearance: none;
-  background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+  background: rgba(255, 255, 255, 0.3);
 }
 
 #year-slider::-webkit-slider-thumb {
@@ -261,23 +283,32 @@ main {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--primary-color);
+  background: white;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #year-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--primary-color);
+  background: white;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .header-controls .slider-container {
+    min-width: 100%;
+  }
+  
   .side-panel {
     width: 100%;
   }
