@@ -41,17 +41,47 @@ export class MapComponent {
         const points = polygon.getAttribute('points');
         
         if (id && points) {
-          // Extract district number from id (e.g., "path1" -> 1)
+          // Extract path number from id (e.g., "path1" -> 1)
           const match = id.match(/path(\d+)/);
           if (match) {
-            const districtNum = parseInt(match[1]);
-            const district = DISTRICTS.find(d => d.number === districtNum);
+            const pathNum = parseInt(match[1]);
             
-            if (district) {
-              // Convert points to path data
-              const pathData = this.pointsToPath(points);
-              this.createDistrictPath(pathData, district.number, district.name);
-            }
+            // Convert points to path data
+            const pathData = this.pointsToPath(points);
+            
+            // Calculate centroid for label placement
+            const centroid = this.calculateCentroid(points);
+            
+            // Create the path for this district
+            this.g.append('path')
+              .attr('d', pathData)
+              .attr('class', 'district')
+              .attr('data-path-id', pathNum)
+              .attr('data-district', pathNum) // Temporary: use path number
+              .attr('data-name', `Path ${pathNum}`) // Temporary name
+              .on('click', () => {
+                this.handleDistrictClick(pathNum);
+              })
+              .on('mouseover', function() {
+                d3.select(this).classed('hover', true);
+              })
+              .on('mouseout', function() {
+                d3.select(this).classed('hover', false);
+              });
+            
+            // Add path number label for identification
+            this.g.append('text')
+              .attr('x', centroid.x)
+              .attr('y', centroid.y)
+              .attr('text-anchor', 'middle')
+              .attr('dominant-baseline', 'middle')
+              .attr('font-size', '12px')
+              .attr('font-weight', 'bold')
+              .attr('fill', '#ff0000')
+              .attr('stroke', '#ffffff')
+              .attr('stroke-width', '0.5')
+              .attr('pointer-events', 'none')
+              .text(pathNum);
           }
         }
       });
@@ -61,6 +91,27 @@ export class MapComponent {
       console.error('Error loading SVG paths:', error);
       this.createFallbackGrid();
     }
+  }
+
+  private calculateCentroid(points: string): { x: number; y: number } {
+    // Calculate the centroid of a polygon from its points string
+    const coords = points.trim().split(/\s+/);
+    let sumX = 0;
+    let sumY = 0;
+    let count = 0;
+    
+    for (let i = 0; i < coords.length; i += 2) {
+      if (i + 1 < coords.length) {
+        sumX += parseFloat(coords[i]);
+        sumY += parseFloat(coords[i + 1]);
+        count++;
+      }
+    }
+    
+    return {
+      x: count > 0 ? sumX / count : 0,
+      y: count > 0 ? sumY / count : 0
+    };
   }
 
   private pointsToPath(points: string): string {
@@ -79,23 +130,6 @@ export class MapComponent {
     
     // Create path: M (move to first point) L (line to subsequent points) Z (close path)
     return `M ${pairs[0]} L ${pairs.slice(1).join(' ')} Z`;
-  }
-
-  private createDistrictPath(pathData: string, number: number, name: string) {
-    this.g.append('path')
-      .attr('d', pathData)
-      .attr('class', 'district')
-      .attr('data-district', number)
-      .attr('data-name', name)
-      .on('click', () => {
-        this.handleDistrictClick(number);
-      })
-      .on('mouseover', function() {
-        d3.select(this).classed('hover', true);
-      })
-      .on('mouseout', function() {
-        d3.select(this).classed('hover', false);
-      });
   }
 
   private createFallbackGrid() {
