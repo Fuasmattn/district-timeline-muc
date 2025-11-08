@@ -2,7 +2,7 @@
  * Tests for color utility functions
  */
 
-const { ColorLuminance } = require('../../js/utils');
+const { ColorLuminance } = require('../utils-test.js');
 
 describe('ColorLuminance', () => {
   describe('hex color validation and parsing', () => {

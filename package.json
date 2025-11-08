@@ -1,9 +1,13 @@
 {
   "name": "district-timeline-muc",
   "version": "1.0.0",
+  "type": "module",
   "description": "Interactive visualization of demographic data across Munich's 25 districts",
-  "main": "js/interaction.js",
+  "main": "src/main.js",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
@@ -21,23 +25,27 @@
     "@testing-library/dom": "^10.4.1",
     "csv-parse": "^6.1.0",
     "jest": "^30.2.0",
-    "jsdom": "^27.1.0"
+    "jsdom": "^27.1.0",
+    "vite": "^7.2.2"
   },
   "jest": {
     "testEnvironment": "node",
     "testMatch": [
       "**/tests/**/*.test.js"
     ],
+    "transform": {},
     "collectCoverageFrom": [
-      "js/**/*.js",
-      "!js/d3.js",
-      "!js/d3.min.js",
-      "!js/ion.rangeSlider.js",
-      "!js/ion.rangeSlider.min.js"
+      "src/**/*.js",
+      "!src/map-data.js"
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/tests/"
     ]
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "d3-dsv": "^3.0.1",
+    "raphael": "^2.3.0"
   }
 }
