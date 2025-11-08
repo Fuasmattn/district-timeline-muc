@@ -1,6 +1,4 @@
 import * as d3 from 'd3';
-import Raphael from 'raphael';
-import { ColorLuminance } from './utils.js';
 import { initMap } from './map.js';
 
 // Initialize the application when DOM is ready
@@ -22,13 +20,13 @@ function showExample() {
   const yAxis = d3.axisLeft(y).ticks(4);
 
   const area = d3.area()
-    .x(d => x(d.JAHR))
+    .x(d => x(d.Jahr))
     .y0(height)
-    .y1(d => y(d.INDIKATOR_WERT));
+    .y1(d => y(d.Indikatorwert));
 
   const valueline = d3.line()
-    .x(d => x(d.JAHR))
-    .y(d => y(d.INDIKATOR_WERT));
+    .x(d => x(d.Jahr))
+    .y(d => y(d.Indikatorwert));
 
   const svg = d3.select("#test").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -39,22 +37,29 @@ function showExample() {
   d3.csv('/data.csv').then(data => {
     let districtName;
 
-    // Filter valid entries
     const filteredData = data.filter(a => {
-      return !isNaN(a.INDIKATOR_WERT) && a.INDIKATOR_WERT > 0 && a.NUMMER == 7;
+      return !isNaN(a.Indikatorwert) && a.Indikatorwert > 0 && a.Indikator == "Altersdurchschnitt";
     });
+
 
     filteredData.forEach(d => {
-      districtName = d.NAME;
-      console.log(d.INDIKATOR_AUSPRAEGUNG);
-      d.JAHR = +d.JAHR;
-      d.INDIKATOR_WERT = +d.INDIKATOR_WERT;
+      // CSV has the district name in the "Räumliche Gliederung" column
+      districtName = d['Räumliche Gliederung'];
+      d.Jahr = +d.Jahr;
+      d.Indikatorwert = +d.Indikatorwert;
     });
 
-    x.domain(d3.extent(filteredData, d => d.JAHR));
-    y.domain([0, d3.max(filteredData, d => d.INDIKATOR_WERT)]);
+    console.log(filteredData);
 
-    d3.select("#districtName").html(districtName.substr(3));
+    x.domain(d3.extent(filteredData, d => d.Jahr));
+    y.domain([0, d3.max(filteredData, d => d.Indikatorwert)]);
+
+    // If district names are prefixed with a two-digit code like "01 ", remove it for display
+    let displayName = '';
+    if (districtName) {
+      displayName = (/^\d{2}\s/.test(districtName)) ? districtName.substr(3) : districtName;
+    }
+    d3.select("#districtName").html(displayName);
 
     svg.append("path")
       .datum(filteredData)
@@ -72,7 +77,7 @@ function showExample() {
     svg.append("text")
       .attr("transform", `translate(${width / 2},${height + margin.bottom - 5})`)
       .style("text-anchor", "middle")
-      .text(`Average age (since ${d3.min(filteredData, d => d.JAHR)})`);
+      .text(`Average age (since ${d3.min(filteredData, d => d.Jahr)})`);
   }).catch(error => {
     console.error('Error loading data:', error);
   });
@@ -80,6 +85,7 @@ function showExample() {
 
 function addTimeline() {
   const timeline = document.getElementById('timeline');
+  if (!timeline) return;
   for (let i = 2015; i > 2000; i--) {
     const li = document.createElement('li');
     li.textContent = i;
@@ -90,7 +96,9 @@ function addTimeline() {
 function initNativeSlider() {
   const slider = document.getElementById('slider');
   const output = document.getElementById('sliderValue');
-  
+
+  if (!slider) return; // nothing to wire up
+
   // Display the default slider value
   if (output) {
     output.textContent = slider.value || slider.max;
