@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import type { AggregatedDistrictData } from '../types';
 import { DISTRICTS } from '../data/districts';
+import { PATH_TO_DISTRICT_MAPPING } from '../data/pathToDistrictMapping';
 
 export class MapComponent {
   private svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
@@ -42,10 +43,11 @@ export class MapComponent {
         
         if (id && points) {
           // Extract path number from id (e.g., "path1" -> 1)
-          // In the SVG, path IDs directly correspond to Munich district numbers
           const match = id.match(/path(\d+)/);
           if (match) {
-            const districtNumber = parseInt(match[1]);
+            const pathId = parseInt(match[1]);
+            // Map SVG path ID to actual Munich district number
+            const districtNumber = PATH_TO_DISTRICT_MAPPING[pathId] || pathId;
             const district = DISTRICTS.find(d => d.number === districtNumber);
             
             if (district) {
